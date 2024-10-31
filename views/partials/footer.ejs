@@ -1,0 +1,158 @@
+<script>
+  const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.9
+  }
+  const container = document.querySelector("section.no-scrollbar")
+  const videos = document.querySelectorAll('video')
+  const images = document.querySelectorAll('img')
+  const toggle = document.getElementById('toggle')
+  const player = document.getElementById('player')
+  const volume = document.getElementById('volume')
+  const volumeBtn = document.getElementById('volume_button')
+  const zoomBtn = document.getElementById('zoom_button')
+  const zoom = document.getElementById('zoom')
+  const left = document.getElementById('left')
+  const right = document.getElementById('right')
+  let currVideo;
+
+  String.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   == 0) {hours   = "";} else
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return (hours && ':')+minutes+':'+seconds;
+}
+  const nextItem = (item) => {
+    const next = item.nextElementSibling
+    if (next) {
+      const top = next.offsetTop;
+      container.scrollTo({ top: top, behavior:"smooth" });
+    }
+  }
+  const observer = new window.IntersectionObserver((entries) => {
+    entries
+      ?.forEach(entry => {
+        const { target, isIntersecting } = entry
+        target._handleIntersect(isIntersecting)
+      })
+  }, options);
+
+  videos.forEach((video, i) => {
+    observer?.observe(video)
+    const time = video.parentElement.querySelector('.time')
+    const timeline = video.parentElement.querySelector('.timeline')
+
+    video._handleIntersect = (isIntersecting) => {
+      if (isIntersecting) {
+        video.play()
+        currVideo = video
+      } else {
+        video.pause()
+      }
+      video.muted = !volume.checked
+      toggle.checked = video.paused
+      player.style.display = !video.paused ? 'none' : 'block';
+      volumeBtn.style.opacity = volume.checked ? 1 : 0.2;
+    }
+    video.addEventListener("error", () => {
+      video.parentElement.classList.add('error')
+    }, true);
+    video.addEventListener("loadedmetadata", () => {
+      timeline.max = video.duration
+    }, false);
+    video.onplay = (event) => {
+      console.log(
+        "The Boolean paused property is now 'false'. Either the play() method was called or the autoplay attribute was toggled.",
+      );
+      time.innerText = `${video.currentTime}`.toHHMMSS() + ' / ' + `${video.duration}`.toHHMMSS()
+      setInterval(() => {
+        if (video.paused) return;
+        time.innerText = `${video.currentTime}`.toHHMMSS() + ' / ' + `${video.duration}`.toHHMMSS()
+        timeline.value = video.currentTime
+
+        console.log(video.currentTime, video.duration, video.currentTime >= video.duration - 1)
+        if (video.currentTime >= video.duration - 1.2) {
+          console.log('video ended')
+          console.log(video.parentElement.nextElementSibling)
+          if (video.parentElement.nextElementSibling) {
+            nextItem(video.parentElement)
+          } else {
+            window.location.reload()
+          }
+        }
+      }, 1000);
+    };
+    video.parentElement.addEventListener('click', () => {
+      toggle.checked = !toggle.checked
+      if (toggle.checked) {
+        video.pause()
+      } else {
+        video.play()
+      }
+      volumeBtn.style.opacity = volume.checked ? 1 : 0.2;
+      player.style.display = !toggle.checked ? 'none' : 'block';
+    })
+    timeline.addEventListener('input', () => {
+      video.currentTime = timeline.value
+    });
+    timeline.addEventListener('click', (event) => {
+      event.stopPropagation()
+    });
+  })
+  images.forEach(image => {
+    observer?.observe(image)
+    let timer;
+    image._handleIntersect = (isIntersecting) => {
+      if (isIntersecting) {
+        currVideo = null;
+        player.style.display = 'none';
+        volumeBtn.style.opacity = 0;
+        timer = setTimeout(() => {
+          if (image.parentElement.nextElementSibling) {
+            nextItem(image.parentElement)
+          } else {
+            window.location.reload()
+          }
+        }, 10000);
+      } else {
+        clearTimeout(timer);
+      }
+    }
+    image.addEventListener("error", () => {
+      image.parentElement.classList.add('error')
+    }, true);
+  })
+  volume.addEventListener('change', () => {
+    const volumeOn = volume.checked
+    videos.forEach(video => {
+      video.muted = !volumeOn
+    })
+    volumeBtn.style.opacity = volumeOn ? 1 : 0.2;
+  })
+  zoom.addEventListener('change', () => {
+    const zoomOn = zoom.checked
+    videos.forEach(video => {
+      video.style.objectFit = zoomOn ? 'cover' : 'contain'
+    })
+    images.forEach(image => {
+      image.style.objectFit = zoomOn ? 'cover' : 'contain'
+    })
+  })
+  left.addEventListener('click', () => {
+    if (currVideo && currVideo.currentTime) {
+      currVideo.currentTime -= 5
+    }
+  });
+  right.addEventListener('click', () => {
+    if (currVideo && currVideo.currentTime < currVideo.duration - 5) {
+      currVideo.currentTime += 5
+    }
+  });
+</script>

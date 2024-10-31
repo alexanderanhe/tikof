@@ -1,0 +1,212 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>of media</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: black;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 15rem;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    background: #053a5f;
+    height: 1rem;
+  }
+
+  /******** Firefox ********/
+  input[type="range"]::-moz-range-track {
+    background: #053a5f;
+    height: 1rem;
+  }
+  /***** Thumb Styles *****/
+  /***** Chrome, Safari, Opera, and Edge Chromium *****/
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    margin-top: -0.5rem; /* Centers thumb on the track */
+    background-color: #5cd5eb;
+    height: 1.4rem;
+    width: 1rem;    
+  }
+
+  .content-grid {
+    --padding-inline: 1.2rem;
+    --content-max-width: 70ch;
+    --breakout-max-width: 85ch;
+
+    --breakout-size: calc((var(--breakout-max-width) - var(--content-max-width)) / 2);
+
+    display: grid;
+    grid-template-columns:
+      [full-width-start] minmax(var(--padding-inline), 1fr)
+      [breakout-start] minmax(0, var(--breakout-size))
+      [content-start] min(100% - (var(--padding-inline) * 2), var(--content-max-width))
+      [content-end] minmax(0, var(--breakout-size))
+      [breakout-end] minmax(var(--padding-inline), 1fr) [full-width-end];
+
+  }
+  .content-grid > :not(.breakout, .full-width),
+  .full-width > :not(.breakout, .full-width) {
+    grid-column: content;
+  }
+
+  .content-grid > .breakout {
+    grid-column: breakout;
+  }
+
+  .content-grid > .full-width {
+    grid-column: full-width;
+
+    display: grid;
+    grid-template-columns: inherit;
+  }
+  main {
+    height: 100svh;
+    place-items: start;
+    grid-auto-rows: max-content;
+    grid-auto-flow: row;
+  }
+  section {
+    width: 100%;
+    height: 100svh;
+    display: grid;
+    grid-column: full-width !important;
+    margin-block: 0px;
+    scroll-snap-type: y mandatory;
+    overflow: auto;
+  }
+  article {
+    position: relative;
+    scroll-snap-align: center;
+    grid-column: full-width;
+    video, img {
+      width: 100%;
+      margin: 0 auto;
+      height: 100%;
+      min-height: 100svh;
+      max-height: 100svh;
+      display: block;
+      vertical-align: middle;
+      object-fit: contain;
+      /* object-fit: cover; */
+      object-position: center;
+    }
+    .time {
+      position: absolute;
+      bottom: 2rem;
+      left: 1rem;
+      color: white;
+    }
+    input.timeline {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      appearance: none;
+      cursor: pointer;
+      z-index: 3;
+    }
+    strong {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+    p {
+      position: absolute;
+      bottom: 0;
+      right: 1rem;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+    &.error::after {
+      position: absolute;
+      inset: 0;
+      content: "An error occurred";
+      background-image: url(/assets/error.svg);
+      background-size: 4rem;
+      background-position: center 44%;
+      background-repeat: no-repeat;
+      display: grid;
+      place-content: center;
+    }
+  }
+  #volume_button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    color: white;
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  #zoom_button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    color: white;
+
+    svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  #player {
+    background-color: transparent;
+    background-image: url(/assets/player.png);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border: 0;
+    height: 62px;
+    inset: 0;
+    margin: auto;
+    position: absolute;
+    width: 62px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  #left, #right {
+    position: fixed;
+    top: 4rem;
+    bottom: 4rem;
+    width: 20svw;
+    background-color: rgba(0, 0, 0, 0);
+    border: 0;
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+  #left {
+    left: 0;
+  }
+  #right {
+    right: 0;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+</style>
