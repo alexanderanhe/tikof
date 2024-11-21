@@ -1,0 +1,9 @@
+<article class="video-container paused" data-volume-level="high" data-id="<%= id %>">
+  <div class="thumbnail-img"></div>
+  <%- include('./video-controls'); %>
+  <video allow="autoplay" playsInline>
+    <source src="<%= src %>" type="video/mp4" data-mime="<%= type?.mime %>" />
+    <!-- <track kind="captions" srclang="en" src="assets/subtitles.vtt"> -->
+  </video>
+  <%- include('../loader'); %>
+</article>

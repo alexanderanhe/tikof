@@ -238,3 +238,4 @@ $RECYCLE.BIN/
 
 package-lock.json
 files/*
+public/previewImgs/thumbnails/*

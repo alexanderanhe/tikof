@@ -10,10 +10,18 @@ const observer = new window.IntersectionObserver((entries) => {
     ?.forEach(entry => {
       const { target, isIntersecting } = entry
       target._handleIntersect(isIntersecting)
+      isIntersecting && window.history.pushState({}, "", `/v/${target.parentElement.dataset.id}`)
     })
 }, options);
 
 const section = document.querySelector("section");
+const prevItem = (item) => {
+  const next = item.previousElementSibling
+  if (next) {
+    const top = next.offsetTop;
+    section.scrollTo({ top: top, behavior:"smooth" });
+  }
+}
 const nextItem = (item) => {
   const next = item.nextElementSibling
   if (next) {
@@ -38,8 +46,12 @@ const initVideoPlayer = (videoContainer) => {
   const timelineContainer = videoContainer.querySelector(".timeline-container")
   const video = videoContainer.querySelector("video")
 
+
+  const videoId = video.parentElement.dataset.id;
+
   video._handleIntersect = (isIntersecting) => {
     isIntersecting ? video.play() : video.pause()
+    video.parentElement.classList.toggle("current", isIntersecting);
   };
   observer?.observe(video);
 
@@ -111,12 +123,14 @@ const initVideoPlayer = (videoContainer) => {
 
   function handleTimelineUpdate(e) {
     const rect = timelineContainer.getBoundingClientRect()
-    const percent = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
+    const percent = isNaN(Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width)
+      ? 0 : Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
     const previewImgNumber = Math.max(
       1,
       Math.floor((percent * video.duration) / 10)
     )
-    const previewImgSrc = `assets/previewImgs/preview${previewImgNumber}.jpg`
+    // console.log({previewImgNumber})
+    const previewImgSrc = `/thumbnails/${videoId}/thumbnail-${previewImgNumber}.jpg`
     previewImg.src = previewImgSrc
     timelineContainer.style.setProperty("--preview-position", percent)
 
@@ -162,7 +176,7 @@ const initVideoPlayer = (videoContainer) => {
   video.addEventListener("timeupdate", () => {
     currentTimeElem.textContent = formatDuration(video.currentTime)
     const percent = video.currentTime / video.duration
-    timelineContainer.style.setProperty("--progress-position", percent)
+    timelineContainer.style.setProperty("--progress-position", isNaN(percent) ? 0 : percent)
   })
 
   const leadingZeroFormatter = new Intl.NumberFormat(undefined, {
@@ -280,30 +294,58 @@ const initVideoPlayer = (videoContainer) => {
 };
 document.querySelectorAll(".video-container").forEach(initVideoPlayer);
 
+const initImagePlayer = (imageContainer) => {
+  const image = imageContainer.querySelector("img")
 
-section.addEventListener("scrollend", async () => {
+  observer?.observe(image)
+  let timer;
+  image._handleIntersect = (isIntersecting) => {
+    image.parentElement.classList.toggle("current", isIntersecting);
+    if (isIntersecting) {
+      timer = setTimeout(() => {
+        if (image.parentElement.nextElementSibling) {
+          nextItem(image.parentElement)
+        }
+      }, 10000);
+    } else {
+      clearTimeout(timer);
+    }
+  }
+  image.addEventListener("error", () => {
+    image.parentElement.classList.add('error')
+  }, true);
+}
+document.querySelectorAll(".image-container").forEach(initImagePlayer);
+
+const handleScrollend = async () => {
   const scrollRest = section.scrollHeight - section.scrollTop - section.clientHeight;
-  console.log("scrollend", section.scrollTop, scrollRest);
   if (scrollRest < 100 && section.dataset.loading !== "true") {
     try {
       section.dataset.loading = true;
-      const request = await fetch(`/api?skip=${skip}&limit=10&media=mp4`);
+      const request = await fetch(`/api?skip=${skip}&limit=10`);
       const data = await request.json();
+      if (data.length === 0) {
+        section.removeEventListener("scrollend", handleScrollend);
+        return;
+      };
       skip += 10;
-      data.forEach(async ({ fileName }) => {
-        const html = await fetch(`/static/video-container?file=${fileName}`);
+      data.forEach(async ({ fileName, typef }) => {
+        const html = await fetch(`/static/${typef}-container?file=${fileName}`);
         const templateText = await html.text();
         const template = document.createElement('template');
         template.innerHTML = templateText;
-        initVideoPlayer(template.content.querySelector(".video-container"));
+        if (typef == "video") {
+          initVideoPlayer(template.content.querySelector(".video-container"));
+        } else {
+          initImagePlayer(template.content.querySelector(".image-container"));
+        }
         section.appendChild(template.content);
-        console.log(template.content);
       });
     } catch (error) {
       console.error(error);
     } finally {
       setTimeout(() => section.dataset.loading = false, 1000);
-      console.log("done", { skip});
     }
   }
-});
+}
+section.addEventListener("scrollend", handleScrollend);

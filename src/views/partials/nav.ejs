@@ -1,0 +1,204 @@
+<div class="nav">
+  <button id="up">
+    <svg viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M903.232 768l56.768-50.432L512 256l-448 461.568 56.768 50.432L512 364.928z" fill="currentColor" /></svg>
+  </button>
+  <button id="down">
+    <svg viewBox="0 0 1024 1024" class="icon"  version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M903.232 256l56.768 50.432L512 768 64 306.432 120.768 256 512 659.072z" fill="currentColor" /></svg>
+  </button>
+  <button id="like">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15.7 4C18.87 4 21 6.98 21 9.76C21 15.39 12.16 20 12 20C11.84 20 3 15.39 3 9.76C3 6.98 5.13 4 8.3 4C10.12 4 11.31 4.91 12 5.71C12.69 4.91 13.88 4 15.7 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <button id="scroll-down">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 15C5 16.8565 5.73754 18.6371 7.05029 19.9498C8.36305 21.2626 10.1435 21.9999 12 21.9999C13.8565 21.9999 15.637 21.2626 16.9498 19.9498C18.2625 18.6371 19 16.8565 19 15V9C19 7.14348 18.2625 5.36305 16.9498 4.05029C15.637 2.73754 13.8565 2 12 2C10.1435 2 8.36305 2.73754 7.05029 4.05029C5.73754 5.36305 5 7.14348 5 9V15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 6V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M15 11L12 14L9 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <button id="collage">
+    <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+        viewBox="0 0 20.954 20.954" xml:space="preserve">
+      <g>
+        <g>
+          <g>
+            <path fill="currentColor" d="M20.851,7.169l-7.705-3.681c-0.09-0.042-0.197-0.004-0.24,0.084l-1.677,3.51h0.913l1.232-2.579
+              l6.679,3.191l-2.088,4.372l-1.177-0.561v2.311l0.723,0.346c0.091,0.043,0.197,0.004,0.241-0.084l3.185-6.668
+              C20.98,7.32,20.941,7.212,20.851,7.169z"/>
+          </g>
+          <g>
+            <path fill="currentColor" d="M0.103,7.126l7.705-3.68c0.09-0.043,0.197-0.005,0.24,0.083l1.678,3.51H8.812L7.58,4.46
+              L0.901,7.651l2.089,4.372l1.176-0.561v2.311l-0.723,0.346c-0.09,0.045-0.197,0.004-0.24-0.084L0.018,7.366
+              C-0.025,7.277,0.013,7.17,0.103,7.126z"/>
+          </g>
+          <g>
+            <path fill="currentColor" d="M16.06,7.684H5.216c-0.126,0-0.229,0.102-0.229,0.228v9.385c0,0.125,0.103,0.229,0.229,0.229
+              h10.845c0.127,0,0.229-0.104,0.229-0.229V7.912C16.29,7.786,16.187,7.684,16.06,7.684z M15.434,14.877h-0.688
+              c-0.4-1.025-0.893-2.463-1.641-2.271c-0.876,0.223-1.315,2.271-1.315,2.271s-0.446-2.311-1.683-3.549
+              c-1.238-1.237-2.437,3.549-2.437,3.549H6.033V8.723h9.401V14.877z"/>
+          </g>
+          <g>
+            <circle fill="currentColor" cx="7.55" cy="10.042" r="0.767"/>
+          </g>
+          <g>
+            <path fill="currentColor" d="M12.697,10.584c0.172,0,0.332-0.019,0.476-0.048c0.167,0.071,0.372,0.115,0.592,0.115
+              c0.564,0,1.023-0.276,1.023-0.616c0-0.341-0.459-0.618-1.023-0.618c-0.212,0-0.409,0.04-0.572,0.106
+              c-0.067-0.065-0.157-0.106-0.257-0.106h-0.149c-0.189,0-0.339,0.144-0.361,0.328c-0.458,0.048-0.798,0.213-0.798,0.413
+              C11.627,10.393,12.106,10.584,12.697,10.584z"/>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </button>
+</div>
+<script>
+  const buttonUp = document.querySelector('.nav button#up');
+  const buttonDown = document.querySelector('.nav button#down');
+  const buttonLike = document.querySelector('.nav button#like');
+  const buttonCollage = document.querySelector('.nav button#collage');
+  buttonUp.addEventListener('click', function (event) {
+    const currentItem = document.querySelector(".current")
+    prevItem(currentItem);
+  });
+  buttonDown.addEventListener('click', function (event) {
+    const currentItem = document.querySelector(".current")
+    nextItem(currentItem);
+  });
+  buttonLike.addEventListener('click', function (event) {
+    const currentItem = document.querySelector(".current")
+    const liked = currentItem.classList.contains("liked");
+    currentItem.classList.toggle("liked", !liked);
+    const { id } = currentItem.dataset;
+    console.log({id})
+  });
+  buttonCollage.addEventListener('click', function (event) {
+    const currentItem = document.querySelector(".current")
+    const { id } = currentItem.dataset;
+    currentItem.classList.contains("video-container") && createCollage(id, buttonCollage)
+  });
+
+  async function createCollage (id, target) {
+    const innerHTML = target.innerHTML
+    const response = await fetch(`/collage/${id}`, {
+      headers: {
+        "Accept": "text/event-stream",
+      },
+    });
+
+    if (!response.ok) {
+      throw Error(response.statusText());
+    }
+
+    const reader = response.body.getReader();
+    let buffer = "";
+
+    for (;;) {
+      const {value, done} = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      buffer += new TextDecoder().decode(value);
+      const chunks = buffer.split("\n\n");
+
+      for (let i = 0; i < chunks.length - 1; i++) {
+        const chunk = chunks[i];
+        const payload = JSON.parse(chunk.replace(/^data: /, ""));
+        target.innerText = payload.progress + "%";
+        if (payload.progress == 100) setTimeout(() => target.innerHTML = innerHTML, 1000);
+      }
+
+      buffer = chunks[chunks.length - 1];
+    }
+  }
+</script>
+<style>
+  .nav {
+    --total-children: 5;
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+    transform: translate(0, calc(-100% / var(--total-children)));
+    transition: opacity ease-in-out 0.5s;
+    opacity: 0;
+  }
+  body:has(section article.current:hover) .nav,
+  .nav:hover, .nav:focus, .nav:focus-within, .nav:focus-visible {
+    opacity: 1;
+  }
+
+  .nav button {
+    appearance: none;
+    background-color: #000000;
+    border: 2px solid #1A1A1A;
+    border-radius: 15px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    margin: 0;
+    /* min-height: 60px; */
+    aspect-ratio: 1 / 1;
+    min-width: 0;
+    outline: none;
+    padding: 6px 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    width: 100%;
+    will-change: transform;
+    z-index: 101;
+    display: grid;
+    place-items: center;
+  }
+
+  .nav button:disabled {
+    pointer-events: none;
+  }
+
+  .nav button:hover {
+    box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+    transform: translateY(-2px);
+  }
+
+  .nav button:active {
+    box-shadow: none;
+    transform: translateY(0);
+  }
+
+  .nav button svg {
+    /* background-color: transparent; */
+    width: 1rem;
+    color: #fff;
+    aspect-ratio: 1/1;
+  }
+
+  body:has(section article:first-child.current) .nav button#up {
+    pointer-events: none;
+    opacity: 0.3;
+  }
+  body:has(section article.current.liked) .nav button#like svg path {
+    fill: #ffffff;
+  }
+  body:has(section article.image-container.current) .nav button#collage {
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  button#collage {
+    font-size: 8px;
+    padding-inline: 0;
+  }
+</style>

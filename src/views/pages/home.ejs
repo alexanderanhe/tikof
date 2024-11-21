@@ -10,9 +10,14 @@
 </head>
 <body>
   <section class="no-scrollbar">
-    <% videos.forEach(function({file}) { %>
-      <%- include('../partials/video/video-container', { file }); %>
+    <% files.forEach(function(file) { %>
+      <% if (file.typef.includes('video')) { %>
+        <%- include('../partials/video/video-container', { ...file }); %>
+      <% } else if (file.typef.includes('image')) { %>
+        <%- include('../partials/image/image-container', { ...file }); %>
+      <% } %>
     <% }); %>
   </section>
+  <%- include('../partials/nav'); %>
 </body>
 </html>

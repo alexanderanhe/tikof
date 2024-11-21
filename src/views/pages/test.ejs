@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .image {
+      width: 120px;
+      height: 68px;
+      background-image: url("/previewImgs/thumbnails/<%= file %>-collage.jpg");
+      background-size: calc(120px * 10) auto;
+      background-repeat: no-repeat;
+      background-position-x: calc(mod(var(--preview), 10) * -120px);
+      background-position-y: calc(((var(--preview) - mod(var(--preview), 10)) / 10) * -68px);
+      position: relative;
+    }
+    .image::after {
+      content: var(--preview);
+      position: absolute;
+      left: 0;
+      right: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="image" style="--preview: 1;"></div>
+
+  <button type="button" onclick="createCollage()">Create Collage <span>0%</span></button>
+  <script>
+    async function createCollage () {
+      const $span = document.querySelector("button span");
+      const response = await fetch("/collage/<%= file %>", {
+        headers: {
+          "Accept": "text/event-stream",
+        },
+      });
+
+      if (!response.ok) {
+        throw Error(response.statusText());
+      }
+
+      const reader = response.body.getReader();
+      let buffer = "";
+
+      for (;;) {
+        const {value, done} = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        buffer += new TextDecoder().decode(value);
+        const chunks = buffer.split("\n\n");
+
+        for (let i = 0; i < chunks.length - 1; i++) {
+          const chunk = chunks[i];
+          const payload = chunk.replace(/^data: /, "");
+          $span.innerText = JSON.parse(payload).progress + "%";
+        }
+
+        buffer = chunks[chunks.length - 1];
+      }
+    }
+
+    var totalFrames = <%= totalFrames %>;
+    setInterval(() => {
+      const $image = document.querySelector(".image");
+      const preview = getComputedStyle($image).getPropertyValue("--preview");
+      $image.style.setProperty("--preview", (preview % totalFrames) + 1);
+    }, 1000);
+
+
+    // (async () => {
+    //   const response = await fetch("/test", {
+    //     headers: {
+    //       "Accept": "text/event-stream",
+    //     },
+    //   });
+
+    //   if (!response.ok) {
+    //     throw Error(response.statusText());
+    //   }
+
+    //   for (const reader = response.body.getReader(); ; ) {
+    //     const {value, done} = await reader.read();
+
+    //     if (done) {
+    //       break;
+    //     }
+
+    //     const chunk = new TextDecoder().decode(value);
+    //     const subChunks = chunk.split(/(?<=})\n\ndata: (?={)/);
+
+    //     for (const subChunk of subChunks) {
+    //       const payload = subChunk.replace(/^data: /, "");
+    //       document.body.innerText = JSON.parse(payload).chunk;
+    //     }
+    //   }
+    // })();
+  </script>
+</body>
+</html>
